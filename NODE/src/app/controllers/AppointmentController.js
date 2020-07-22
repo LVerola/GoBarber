@@ -77,6 +77,12 @@ class AppointmentController {
         .json({ error: 'Appointment date is not available.' });
     }
 
+    if (req.userId === provider_id) {
+      return res
+        .status(400)
+        .json({ error: 'User cannot schedule an appointment for himself.' });
+    }
+
     const appointment = await Appointment.create({
       user_id: req.userId,
       provider_id,
@@ -91,7 +97,7 @@ class AppointmentController {
     );
 
     await Notification.create({
-      content: `Novo agendamento de ${user.name} para ${formattedDate}`,
+      content: `Novo agendamento de ${user.name} para o ${formattedDate}`,
       user: provider_id,
     });
 
